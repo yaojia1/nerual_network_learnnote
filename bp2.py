@@ -64,7 +64,14 @@ print(weightn,basin)
 lay1[0]=forward(xs,weightn,basin,0,tf.nn.relu)
 for i in range(1,hide_size):
     lay1[i]=forward(lay1[i-1],weightn,basin,i,tf.nn.relu)#隐层前向传播'''
-#weightn,basin=addLayer(input_size,output_size,hide_size)
+lay1=[1]*hide_size
+weightn,basin=addLayer(input_size,output_size,hide_size)
+lay1[0]=forward(xs,weightn[0],basin[0],tf.nn.relu)
+for i in range(1,hide_size):
+    lay1[i]=forward(lay1[i-1],weightn[i],basin[i],tf.nn.relu)
+l0=forward(xs,weightn[0],basin[0],tf.nn.relu)
+l5=forward(xs,weightn[1],basin[1],tf.nn.relu)
+l1=forward(xs,weightn[2],basin[2],tf.nn.relu)
 weights01 = tf.Variable(tf.random_normal([input_size,input_size]))
 basis01 = tf.Variable(tf.zeros([1,output_size])+0.1)
 l11=forward(xs,weights01,basis01,tf.nn.relu)
@@ -73,12 +80,12 @@ basis02 = tf.Variable(tf.zeros([1,output_size])+0.1)
 l12=forward(xs,weights02,basis02,tf.nn.relu)
 weights03 = tf.Variable(tf.random_normal([input_size,input_size]))
 basis03 = tf.Variable(tf.zeros([1,output_size])+0.1)
-l1=forward(xs,weights03,basis03,tf.nn.relu)
+#l1=forward(xs,weights03,basis03,tf.nn.relu)
 #输出层
 #l2 = addLayer(l1,10,1,activity_function=None)
 weights2 = tf.Variable(tf.random_normal([input_size,output_size]))
 basis2 = tf.Variable(tf.zeros([1,1])+0.1)
-weights_plus_b2 = tf.matmul(l1,weights2)+basis2
+weights_plus_b2 = tf.matmul(lay1[hide_size-1],weights2)+basis2
 l2=weights_plus_b2
 
 #loss
@@ -106,14 +113,22 @@ ll=[1]*hide_size
 ll[0]=forward(xs,weightn,basin,0,tf.nn.relu)
 for i in range(1,hide_size):
     ll[i]=forward(ll[i-1],weightn,basin,i,tf.nn.relu)#隐层前向传播'''
-ll11=forward(xs,weights01,basis01,tf.nn.relu)
-ll12=forward(xs,weights02,basis02,tf.nn.relu)
-ll1=forward(xs,weights03,basis03,tf.nn.relu)
+#ll11=forward(xs,weights01,basis01,tf.nn.relu)
+#ll12=forward(xs,weights02,basis02,tf.nn.relu)
+#ll1=forward(xs,weights03,basis03,tf.nn.relu)
+'''
+ll11=forward(xs,weightn[0],basin[0],tf.nn.relu)
+ll12=forward(xs,weightn[1],basin[1],tf.nn.relu)
+ll1=forward(xs,weightn[2],basin[2],tf.nn.relu)'''
+lay2=[1]*hide_size
+lay2[0]=forward(xs,weightn[0],basin[0],tf.nn.relu)
+for i in range(1,hide_size):
+    lay2[i]=forward(lay2[i-1],weightn[i],basin[i],tf.nn.relu)
 #输出层
 #l2 = addLayer(l1,10,1,activity_function=None)
 #weights_plus_b2 = tf.matmul(ll1,weights2)+basis2
 #weights_plus_b3=weights_plus_b2
-weights_plus_b3=forward(ll1,weights2,basis2,tf.nn.relu)
+weights_plus_b3=forward(lay2[hide_size-1],weights2,basis2,tf.nn.relu)
 result=sess.run(weights_plus_b3,feed_dict={xs:xi[50:]})
 
 #计算误差
